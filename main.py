@@ -49,7 +49,7 @@ def estimate_loss(model, val_iterations):
     model.train()
     return out
 
-sample_model = BigramModel(VOCAB_SIZE)
+sample_model = BigramModel()
 sample_logits, sample_loss = sample_model(x_sample, y_sample)
 
 
@@ -70,7 +70,7 @@ for epoch in range(EPOCHS):
     loss.backward()
     optimizer.step()
 
-initial = torch.zeros((1, 1), dtype=torch.long)
+initial = torch.zeros((1, context_size), dtype=torch.long)
 sample_generation = sample_model.generate(initial, new_tokens=300)[0].tolist()
 print(decode(sample_generation, decoder_map))
 
