@@ -2,7 +2,7 @@ import torch.nn as nn
 from torch.nn import functional
 import torch
 from constants import *
-from head import *
+from multihead import *
 
 class BigramModel(nn.Module):
 
@@ -13,7 +13,7 @@ class BigramModel(nn.Module):
         # converts each position in the input sequence into dense vectore which captures info about sequence of tokens
         self.position_embedding_table = nn.Embedding(context_size, num_embeddings)
         # create head
-        self.head = Head(num_embeddings)
+        self.head = MultiHead(4, num_embeddings//4)
         # converts to logits
         self.linear_projection = nn.Linear(num_embeddings, VOCAB_SIZE)
         # loss function to compute gradients
@@ -25,9 +25,9 @@ class BigramModel(nn.Module):
         # converts input sequence index into embeddings
         token_embeddings = self.token_embedding_table(index)
         # Position embeddings must match the batch size of token embeddings
-        position_embeddings = self.position_embedding_table(torch.arange(index.size(1)))  # (sequence_length, num_embeddings)
-        # Now expand position embeddings to match the batch size of token embeddings
-        position_embeddings = position_embeddings.unsqueeze(0).expand(index.size(0), -1, -1)  # (batch_size, sequence_length, num_embeddings)
+        batch_size, seq_length = index.shape
+        position_indices = torch.arange(seq_length, device=index.device)  # Match sequence length
+        position_embeddings = self.position_embedding_table(position_indices).unsqueeze(0)  # Add batch dimension
         # Combine token embeddings and position embeddings
         combined_embeddings = token_embeddings + position_embeddings  # Now both have shape (batch_size, sequence_length, num_embeddings)
         logits = self.linear_projection(self.head(combined_embeddings))

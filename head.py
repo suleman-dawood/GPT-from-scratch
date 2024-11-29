@@ -28,5 +28,5 @@ class Head(nn.Module):
         attention_weights = attention_weights.masked_fill(mask == 0, float('-inf'))
         attention_weights = nn.functional.softmax(attention_weights, dim=1)
         attention_weights = self.dropout(attention_weights)
-
-        return attention_weights @ Value  # Check if this works with the correct shapes
+        output = attention_weights @ Value
+        return output # Check if this works with the correct shapes
