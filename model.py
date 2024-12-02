@@ -13,12 +13,15 @@ class BigramModel(nn.Module):
         self.token_embedding_table = nn.Embedding(VOCAB_SIZE, num_embeddings)
         # converts each position in the input sequence into dense vectore which captures info about sequence of tokens
         self.position_embedding_table = nn.Embedding(context_size, num_embeddings)
-        self.blocks = nn.Sequential(
-            Block(num_embeddings, head_count),
-            Block(num_embeddings, head_count),
-            Block(num_embeddings, head_count)
-        )
+        blocks = []
+        for i in range(layer_count):
+            blocks.append(Block(num_embeddings, head_count))
+
+        # pass the list to nn.Sequential and unpack
+        self.blocks = nn.Sequential(*blocks)
+        self.ln1 = nn.LayerNorm(num_embeddings)
         self.linear_projection = nn.Linear(num_embeddings, VOCAB_SIZE)
+
         self.loss_fn = nn.CrossEntropyLoss()
 
     # forward pass
@@ -27,12 +30,12 @@ class BigramModel(nn.Module):
         # converts input sequence index into embeddings
         token_embeddings = self.token_embedding_table(index)
         # Position embeddings must match the batch size of token embeddings
-        batch_size, seq_length = index.shape
-        position_indices = torch.arange(seq_length, device=index.device)  # Match sequence length
+        batch_length, seq_length = index.shape
+        position_indices = torch.arange(seq_length)  # Match sequence length
         position_embeddings = self.position_embedding_table(position_indices).unsqueeze(0)  # Add batch dimension
         # Combine token embeddings and position embeddings
         combined_embeddings = token_embeddings + position_embeddings  # Now both have shape (batch_size, sequence_length, num_embeddings)
-        logits = self.linear_projection(self.blocks(combined_embeddings)) # maps embeddings into a final output vector
+        logits = self.linear_projection(self.blocks(self.ln1(combined_embeddings))) # maps embeddings into a final output vector
 
         if targets==None:
             loss = None
