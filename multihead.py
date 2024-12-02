@@ -9,6 +9,7 @@ class MultiHead(nn.Module):
         self.heads = nn.ModuleList()  # initialize an empty ModuleList
         for _ in range(head_count):  # add each Head to the list
             self.heads.append(Head(head_size))
+        self.proj = nn.Linear(num_embeddings, num_embeddings)
 
     def forward(self, x):
 
@@ -16,4 +17,4 @@ class MultiHead(nn.Module):
         for head in self.heads:
             head_outputs.append(head(x))  # apply each head to the input
         concatenated = torch.cat(head_outputs, dim=-1)  # concatenate the outputs
-        return concatenated
+        return self.proj(concatenated)
