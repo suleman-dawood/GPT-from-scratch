@@ -1,19 +1,17 @@
-# reading file
-with open("input.txt", 'r', encoding='utf-8') as file:
-    full_text = file.read()
+from nietzsche import *
 
-
+full_text = all_text
 characters = sorted(set(full_text))
 VOCAB_SIZE = len(characters)
 DATA_SPLIT = 0.9
-NEW_TOKENS = 500
-SEED = 1
+NEW_TOKENS = 1000
+SEED = 2
 LR = 0.0005
-EPOCHS = 500
+EPOCHS = 5000
 DROPOUT = 0.2
-context_size = 256
-batch_size = 64
-val_iterations = 10
-num_embeddings = 384
-head_count = 6
-layer_count = 6
+context_size = 64
+batch_size = 32
+val_iterations = 50
+num_embeddings = 96
+head_count = 3
+layer_count = 3
