@@ -1,10 +1,11 @@
 from constants import *
 # character-to-index mapping
-def create_mapping():
+def create_mapping(tokens):
     mapping = {}
-    for i, ch in enumerate(characters):
-        mapping[ch] = i
+    for i, token in enumerate(tokens):
+        mapping[token] = i
     return mapping
+
 
 # encode a string using the mapping
 def encode(string, mapping):
@@ -14,15 +15,15 @@ def encode(string, mapping):
     return encoded
 
 # reverse mapping for decoding
-def create_reverse_mapping(mapping):
-    reverse_mapping = {}
-    for ch, i in mapping.items():
-        reverse_mapping[i] = ch
-    return reverse_mapping
+def create_reverse_mapping(tokens):
+    mapping = {}
+    for i, token in enumerate(tokens):
+        mapping[i] = token
+    return mapping
 
 # decode an encoded list back to the original string
-def decode(encoded, reverse_mapping):
+def decode(encoded, mapping):
     decoded = []
     for i in encoded:
-        decoded.append(reverse_mapping[i])
-    return ''.join(decoded)
+        decoded.append(mapping[i])
+    return ''.join(decoded).replace('</w>', ' ')

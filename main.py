@@ -2,13 +2,16 @@ import torch
 from mappings import *
 from constants import *
 from model import *
+from reader import *
+
+tokens = read_tokens()
 
 # mapping to encode text into numbers
-encoder_map = create_mapping()
-decoder_map = create_reverse_mapping(encoder_map)
+encoder_map = create_mapping(tokens)
+decoder_map = create_reverse_mapping(tokens)
 
 torch.manual_seed(SEED)
-data = torch.tensor(encode(full_text, encoder_map), dtype=torch.long) # convert data into a tensor
+data = torch.tensor(encode(tokens, encoder_map), dtype=torch.long) # convert data into a tensor
 
 split = int(DATA_SPLIT*len(data))
 training_set = data[:split] # split into training and validation set
