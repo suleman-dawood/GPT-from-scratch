@@ -17,16 +17,16 @@ class Head(nn.Module):
 
     # forward pass throught the attention calculations
     def forward(self, x):
-        Key = self.key(x)
-        Query = self.query(x)
-        Value = self.value(x)
+        Key = self.key(x) # all tokens
+        Query = self.query(x) # current token
+        Value = self.value(x) # actual data used in the ouput
 
-        scale_factor = Key.shape[-1]**-0.5
-        attention_weights = Query @ Key.transpose(-2, -1) * scale_factor
+        scale_factor = Key.shape[-1]**-0.5 # scale to stabilize
+        attention_weights = Query @ Key.transpose(-2, -1) * scale_factor # calculates how much each token relates to every other token
 
         mask = self.tril[:context_size, :context_size]
         attention_weights = attention_weights.masked_fill(mask == 0, float('-inf'))
         attention_weights = nn.functional.softmax(attention_weights, dim=1)
         attention_weights = self.dropout(attention_weights)
         output = attention_weights @ Value
-        return output # Check if this works with the correct shapes
+        return output

@@ -3,10 +3,9 @@ from mappings import *
 from constants import *
 from model import *
 
-
+# mapping to encode text into numbers
 encoder_map = create_mapping()
 decoder_map = create_reverse_mapping(encoder_map)
-
 
 torch.manual_seed(SEED)
 data = torch.tensor(encode(full_text, encoder_map), dtype=torch.long) # convert data into a tensor
@@ -39,7 +38,7 @@ def get_batch(split):
 
 x_sample, y_sample = get_batch('train')
 
-# evaluates loss for both validation and trainiing sets
+# evaluates loss for both validation and trainiing sets for printing after a set period
 @torch.no_grad()
 def estimate_loss(model):
     out = {}
@@ -54,27 +53,26 @@ def estimate_loss(model):
     model.train()
     return out
 
-sample_model = BigramModel()
+def train_model():
+    sample_model = BigramModel()
+    optimizer = torch.optim.Adam(sample_model.parameters(), lr=LR)
 
-optimizer = torch.optim.Adam(sample_model.parameters(), lr = LR)
+    for epoch in range(EPOCHS):
+        # we compare training and validation loss every once in a while
+        if epoch % val_iterations == 0:
+            losses = estimate_loss(sample_model)
+            print(f"step {epoch}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
 
-for epoch in range(EPOCHS):
+        # backpropogation step to compute gradients
+        x_sample, y_sample = get_batch("train")
+        logits, loss = sample_model(x_sample, y_sample)
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
 
-    # we compare training and validation loss every once in a while
-    if epoch % val_iterations == 0:
-        losses = estimate_loss(sample_model)
-        print(f"step {epoch}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+    # saving the trained model for use later on
+    torch.save(sample_model.state_dict(), "trained_model.pth")
 
-    x_sample, y_sample = get_batch("train")
-
-    # backpropogation step to compute gradients
-    logits, loss = sample_model(x_sample, y_sample)
-    optimizer.zero_grad(set_to_none=True)
-    loss.backward()
-    optimizer.step()
-
-initial = torch.zeros((1, context_size), dtype=torch.long)
-sample_generation = sample_model.generate(initial, new_tokens=NEW_TOKENS)[0].tolist()
-print(decode(sample_generation, decoder_map))
+train_model()
 
 

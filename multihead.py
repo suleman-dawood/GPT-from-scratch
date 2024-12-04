@@ -6,8 +6,8 @@ class MultiHead(nn.Module):
 
     def __init__(self, head_count, head_size):
         super().__init__()
-        self.heads = nn.ModuleList([Head(head_size) for _ in range(head_count)])
-        self.proj = nn.Linear(head_size * head_count, num_embeddings)
+        self.heads = nn.ModuleList([Head(head_size) for _ in range(head_count)]) # each head independatly computes attention
+        self.proj = nn.Linear(head_size * head_count, num_embeddings) # projects in into a vector embedding
         self.dropout = nn.Dropout(DROPOUT)
 
     def forward(self, x):
