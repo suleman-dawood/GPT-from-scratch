@@ -1,30 +1,20 @@
-import tkinter as tk
-from tkinter import messagebox
-from generate import *
+from flask import Flask, render_template, jsonify
+from generate import generate_text
 
-# Function to call the generate function and display output
-def func():
+app = Flask(__name__)
+
+# Home route to serve the index.html page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/generate', methods=['POST'])
+def generate_endpoint():
     try:
-        # Call the generate function and capture its output
-        result = generate_text(150)
-        # Display the output in the text box
-        output_text.delete(1.0, tk.END)  # Clear previous output
-        output_text.insert(tk.END, result)
+        result = generate_text(400)  # Generate text
+        return result  # Return just the generated text as plain text
     except Exception as e:
-        # Show an error message if an exception occurs
-        messagebox.showerror("Error", f"An error occurred:\n{str(e)}")
+        return str(e), 500
 
-# Create the main application window
-root = tk.Tk()
-root.title("Generate Output UI")
-
-# Create a button to trigger the generate function
-run_button = tk.Button(root, text="Generate", command=generate_text, font=("Arial", 14), bg="blue", fg="white")
-run_button.pack(pady=10)
-
-# Create a text box to display the output
-output_text = tk.Text(root, wrap=tk.WORD, height=20, width=60, font=("Arial", 12))
-output_text.pack(pady=10)
-
-# Start the Tkinter event loop
-root.mainloop()
+if __name__ == '__main__':
+    app.run(debug=True)
