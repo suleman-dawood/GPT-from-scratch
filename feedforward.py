@@ -7,7 +7,7 @@ class FeedForward(nn.Module): # simple neural network
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(num_embeddings, 4 * num_embeddings),
-            nn.ReLU(), # activation function
+            nn.GELU(), # activation function
             nn.Linear(4 * num_embeddings, num_embeddings),
             nn.Dropout(DROPOUT)
         )
