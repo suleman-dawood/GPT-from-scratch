@@ -1,20 +1,24 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request
 from generate import generate_text
 
 app = Flask(__name__)
 
-# Home route to serve the index.html page
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html')  # Make sure this points to your HTML file
 
 @app.route('/generate', methods=['POST'])
 def generate_endpoint():
+    # Existing logic to generate text based on input
     try:
-        result = generate_text(400)  # Generate text
-        return result  # Return just the generated text as plain text
+        data = request.get_json()
+        length = int(data.get('length', 100))  # Default length is 100 if not provided
+
+        result = generate_text(length)
+
+        return result  # Return the generated text
     except Exception as e:
-        return str(e), 500
+        return f"Error: {str(e)}", 500
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -2,12 +2,20 @@
 async function generateOutput() {
     const button = document.getElementById("generate-button");
     const outputArea = document.getElementById("output-text");
+    const lengthInput = document.getElementById("length-input");  // Get the input field
+    const lengthValue = lengthInput.value;  // Get the value of the input field
+
     button.disabled = true;
     button.textContent = "Generating...";
 
     try {
-        // Call the backend endpoint
-        const response = await fetch('/generate', { method: 'POST' });
+        // Call the backend endpoint with the length value
+        const response = await fetch('/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ length: lengthValue })  // Send the length to the backend
+        });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -16,7 +24,7 @@ async function generateOutput() {
         const result = await response.text();
         console.log(result);  // Log the result in the console
 
-        // Also display the result in the textarea
+        // Display the result in the textarea
         outputArea.value = result;  // Since textarea preserves newlines, this should work
 
     } catch (error) {

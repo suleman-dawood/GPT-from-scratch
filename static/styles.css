@@ -1,32 +1,78 @@
+/* General Body Styles */
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     margin: 0;
     height: 100vh;
     background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-button {
+
+/* Container for Centering Content */
+.container {
+    text-align: center;
+    width: 100%;
+}
+
+/* Header Styles */
+.page-title {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Input and Button Container */
+.input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Label Styles */
+.input-label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+/* Input Field Styles */
+.input-field {
+    font-size: 16px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px;
+    text-align: center;
+}
+
+/* Button Styles */
+.generate-button {
     background-color: blue;
     color: white;
     font-size: 16px;
-    padding: 10px 20px;
+    padding: 5px 30px;
     border: none;
     cursor: pointer;
-    margin-bottom: 20px;
     border-radius: 5px;
 }
-button:hover {
+
+.generate-button:hover {
     background-color: darkblue;
 }
-textarea {
+
+.generate-button:disabled {
+    background-color: gray;
+}
+
+/* Output Textarea Styles */
+.output-textarea {
     width: 80%;
-    height: 300px;
+    height: 200px;
     font-size: 14px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     resize: none;
+    font-family: monospace; /* To maintain formatting */
 }
